@@ -12,7 +12,6 @@ void unix_error(char *msg) /* unix-style error */
     exit(0);
 }
 
-
 /* $end unixerror */
 
 void posix_error(int code, char *msg) /* posix-style error */
