@@ -20,6 +20,7 @@ typedef struct{
 	int indiceFG; // si pas de FG, indice = -1
 } jobsT;
 
+jobT initJob(pid_t pid, state etat, char *cmd);
 jobsT initJobs();
 void delJobPid(pid_t pid, jobsT *jobs);
 void delJobInd(int i, jobsT *jobs);
