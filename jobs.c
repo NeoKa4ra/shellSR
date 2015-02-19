@@ -9,17 +9,15 @@ jobT initJob(pid_t pid, state etat, char *cmd)
   return jb;    
 }
 
-jobsT initJobs()
+void initJobs(jobsT *jobs)
 {
-	jobsT jb;
-	jb.taille = 0;
-	jb.indiceFG = -1;
-	return jb;
+	jobs->taille = 0;
+	jobs->indiceFG = -1;
 }
 
 int searchPIDWithInd(int ind,jobsT *jobs)
 {
-  return(jobs->jobs[indice].pid);
+  return(jobs->jobs[ind].pid);
 }
 
 
@@ -59,6 +57,7 @@ void delJobInd(int i, jobsT *jobs){
 	  jobs->jobs[j-1] = jobs->jobs[j];
 	}
      jobs->taille--;
+     jobs->indiceFG = -1;
     }
   
     
@@ -85,17 +84,26 @@ void printJob(jobsT jobs){
 
 void putJobInBG(int pid, jobsT *jobs)
 {
-  int ind = searchIndWithPid( pid, *jobs);
+  int ind = searchIndWithPid(pid, jobs);
   jobs->jobs[ind].etat = BG;
+  jobs->indiceFG = -1;
   kill(pid,SIGCONT);
 }
 
 
 void putJobInFG(int pid, jobsT *jobs)
 {
-  int ind = searchIndWithPid( pid, *jobs);
-  jobs->jobs[ind].etat = BG;
+  int status;
+  int ind = searchIndWithPid(pid, jobs);
+  jobs->jobs[ind].etat = FG;
+  jobs->indiceFG = ind;
   kill(pid,SIGCONT);
-   if (waitpid(pid, &status, 0) < 0)
-     unix_error("waitfg: waitpid error");
+  while (jobs->indiceFG != -1 || waitpid(pid, &status, WNOHANG|WUNTRACED) == 0);
+}
+
+
+void stoppedJob(int ind,jobsT *jobs)
+{
+  jobs->jobs[ind].etat = ST;
+  jobs->indiceFG = -1;
 }

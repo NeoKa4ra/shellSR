@@ -21,7 +21,7 @@ typedef struct{
 } jobsT;
 
 jobT initJob(pid_t pid, state etat, char *cmd);
-jobsT initJobs();
+void initJobs(jobsT *jobs);
 void delJobPid(pid_t pid, jobsT *jobs);
 void delJobInd(int i, jobsT *jobs);
 void addJob(jobT job, jobsT *jobs);
@@ -30,5 +30,9 @@ void putJobInBG(int pid, jobsT *jobs);
 void putJobInFG(int pid, jobsT *jobs);
 int searchPIDWithInd(int ind,jobsT *jobs);
 int searchIndWithPid(pid_t pid, jobsT *jobs);
+
+void stoppedJob(int ind,jobsT *jobs);
+
+
 
 #endif

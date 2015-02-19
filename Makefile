@@ -4,7 +4,7 @@ CFLAGS=-Wall -Werror
 .PHONY : clean
 
 
-myShell : csapp.c csapp.h eval.c myshell.c myshell.h parseline.c jobs.c jobs.h
+myShell : csapp.c csapp.h fctutil.h myshell.h jobs.h eval.c myshell.c parseline.c jobs.c fctutil.c
 	 $(CC) $(CFLAGS) -o $@ $^ -lpthread -O0
 
 clean :

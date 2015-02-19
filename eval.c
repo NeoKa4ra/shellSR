@@ -25,6 +25,7 @@ void eval(char *cmdline, jobsT *jobs)
       
       if ((pid = Fork()) == 0)
 	{   
+
 	  if (execvp(argv[0], argv) < 0)
 	    {
 	      printf("%s: Command not found.\n", argv[0]);
@@ -38,8 +39,8 @@ void eval(char *cmdline, jobsT *jobs)
 	  jobT job = initJob(pid, etat, cmdline);
 	  addJob(job, jobs);
 	  int status;
-	  if (waitpid(pid, &status, 0) < 0)
-	    unix_error("waitfg: waitpid error");
+	  while (jobs->indiceFG != -1 || waitpid(pid, &status, WNOHANG|WUNTRACED) == 0);
+	    
 	}
       else       // travail d'arriere-plan, on imprime le pid
 	{
@@ -55,11 +56,13 @@ void eval(char *cmdline, jobsT *jobs)
 	printJob(*jobs);
       else if(!strcmp(argv[0], "fg") || !strcmp(argv[0], "bg"))
 	{
+	  
 	  int pid;
-	  if(argv[1] == null)
+	  if(argv[1] == NULL)
 	    pid = jobs->jobs[jobs->taille-1].pid;
 	  else
 	    {
+	      
 	      char *buf = malloc(strlen(argv[1]) -1);
 	      int i;
 	      for(i = 1; i < strlen(argv[1]); i++)
@@ -67,6 +70,7 @@ void eval(char *cmdline, jobsT *jobs)
 	      // un  décalage de l'indice existe entre l'affichage et l'implémentation d'où la présence du -1
 	      pid = searchPIDWithInd(atoi(buf)-1, jobs);
 	    }
+	  
 	  if(!strcmp(argv[0], "fg"))
 	    putJobInFG(pid, jobs);
 	  else
