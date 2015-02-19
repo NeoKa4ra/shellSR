@@ -26,5 +26,9 @@ void delJobPid(pid_t pid, jobsT *jobs);
 void delJobInd(int i, jobsT *jobs);
 void addJob(jobT job, jobsT *jobs);
 void printJob(jobsT jobs);
+void putJobInBG(int pid, jobsT *jobs);
+void putJobInFG(int pid, jobsT *jobs);
+int searchPIDWithInd(int ind,jobsT *jobs);
+int searchIndWithPid(pid_t pid, jobsT *jobs);
 
 #endif

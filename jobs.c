@@ -16,6 +16,13 @@ jobsT initJobs()
 	jb.indiceFG = -1;
 	return jb;
 }
+
+int searchPIDWithInd(int ind,jobsT *jobs)
+{
+  return(jobs->jobs[indice].pid);
+}
+
+
 //renvoi l'indice qui correspond au pid donée ou -1 si le pid n'existe pas
 int searchIndWithPid(pid_t pid, jobsT *jobs)
 {
@@ -67,10 +74,28 @@ void addJob(jobT job, jobsT *jobs){
 void printJob(jobsT jobs){
 	int i;
 	for (i=0;i<jobs.taille;i++){
-	  printf("[%d]\t",i);
+	  printf("[%d]\t",i+1);
 	  if(jobs.jobs[i].etat == ST)
 	    printf("Stopped\t%s", jobs.jobs[i].cmd);
 	  else
 	    printf("Running\t%s",  jobs.jobs[i].cmd);
 	}
+}
+
+
+void putJobInBG(int pid, jobsT *jobs)
+{
+  int ind = searchIndWithPid( pid, *jobs);
+  jobs->jobs[ind].etat = BG;
+  kill(pid,SIGCONT);
+}
+
+
+void putJobInFG(int pid, jobsT *jobs)
+{
+  int ind = searchIndWithPid( pid, *jobs);
+  jobs->jobs[ind].etat = BG;
+  kill(pid,SIGCONT);
+   if (waitpid(pid, &status, 0) < 0)
+     unix_error("waitfg: waitpid error");
 }

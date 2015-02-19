@@ -51,9 +51,27 @@ void eval(char *cmdline, jobsT *jobs)
     }
   else // si oui, executee directement
     {
-      
-      if (!strcmp(argv[0], "jobs"))
-	; 
+      if(!strcmp(argv[0], "jobs"))
+	printJob(*jobs);
+      else if(!strcmp(argv[0], "fg") || !strcmp(argv[0], "bg"))
+	{
+	  int pid;
+	  if(argv[1] == null)
+	    pid = jobs->jobs[jobs->taille-1].pid;
+	  else
+	    {
+	      char *buf = malloc(strlen(argv[1]) -1);
+	      int i;
+	      for(i = 1; i < strlen(argv[1]); i++)
+		buf[i-1] = argv[1][i];
+	      // un  décalage de l'indice existe entre l'affichage et l'implémentation d'où la présence du -1
+	      pid = searchPIDWithInd(atoi(buf)-1, jobs);
+	    }
+	  if(!strcmp(argv[0], "fg"))
+	    putJobInFG(pid, jobs);
+	  else
+	    putJobInBG(pid, jobs);
+	}
     }
   return;
 }
@@ -66,7 +84,7 @@ int builtin_command(char **argv)
     exit(0);
   if (!strcmp(argv[0], "&"))    // ignorer & tout seul
     return 1;
-  if (!strcmp(argv[0], "jobs"))
+  if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg"))
     return 1; 
 
   return 0;                     // ce n'est pas une commande integree
