@@ -25,7 +25,7 @@ void eval(char *cmdline, jobsT *jobs)
       
       if ((pid = Fork()) == 0)
 	{   
-
+	  setpgid(pid,pid);
 	  if (execvp(argv[0], argv) < 0)
 	    {
 	      printf("%s: Command not found.\n", argv[0]);
@@ -54,7 +54,7 @@ void eval(char *cmdline, jobsT *jobs)
     {
       if(!strcmp(argv[0], "jobs"))
 	printJob(*jobs);
-      else if(!strcmp(argv[0], "fg") || !strcmp(argv[0], "bg"))
+      else if(!strcmp(argv[0], "fg") || !strcmp(argv[0], "bg")|| !strcmp(argv[0], "stop"))
 	{
 	  
 	  int pid;
@@ -73,6 +73,11 @@ void eval(char *cmdline, jobsT *jobs)
 	  
 	  if(!strcmp(argv[0], "fg"))
 	    putJobInFG(pid, jobs);
+	  else if(!strcmp(argv[0], "stop"))
+	    {
+	      kill(pid, SIGTSTP);
+	      stopedJob(searchIndWithPid(pid,jobs), jobs);
+	    }
 	  else
 	    putJobInBG(pid, jobs);
 	}
@@ -88,7 +93,7 @@ int builtin_command(char **argv)
     exit(0);
   if (!strcmp(argv[0], "&"))    // ignorer & tout seul
     return 1;
-  if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg"))
+  if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg") || !strcmp(argv[0], "stop"))
     return 1; 
 
   return 0;                     // ce n'est pas une commande integree
