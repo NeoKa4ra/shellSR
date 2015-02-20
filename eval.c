@@ -85,8 +85,13 @@ void eval(char *cmdline, jobsT *jobs)
       else
 	{
 
-	  while (jobs->taille > 0)
+	  while (jobs->taille > 0 || allStopped(jobs) == 0)
 	    sleep(1);
+	  fflush(stdout);
+	  
+	  if(jobs->taille > 0)
+	    printJob(*jobs);
+	  fflush(stdout);
 	}
     }
   return;

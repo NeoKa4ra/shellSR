@@ -32,7 +32,7 @@ int searchPIDWithInd(int ind,jobsT *jobs);
 int searchIndWithPid(pid_t pid, jobsT *jobs);
 
 void stoppedJob(int ind,jobsT *jobs);
-
+int allStopped(jobsT *jb);
 
 
 #endif

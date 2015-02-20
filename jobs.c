@@ -111,3 +111,22 @@ void stoppedJob(int ind,jobsT *jobs)
   jobs->jobs[ind].etat = ST;
   jobs->indiceFG = -1;
 }
+
+
+int allStopped(jobsT *jb)
+{
+  int i;
+  int result = 1;
+  
+  for(i = 0; i < jb->taille; i++)
+    {
+      
+      if (jb->jobs[i].etat != ST)
+	{
+	  result = 0;
+	  break;
+	}
+    }
+  
+  return result;
+}
