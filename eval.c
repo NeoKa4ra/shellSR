@@ -82,7 +82,7 @@ void eval(char *cmdline, jobsT *jobs)
 	  else
 	    putJobInBG(pid, jobs);
 	}
-      else
+      else if(!strcmp(argv[0], "wait")
 	{
 
 	  while (jobs->taille > 0 || allStopped(jobs) == 0)
