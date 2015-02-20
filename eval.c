@@ -82,6 +82,12 @@ void eval(char *cmdline, jobsT *jobs)
 	  else
 	    putJobInBG(pid, jobs);
 	}
+      else
+	{
+
+	  while (jobs->taille > 0)
+	    sleep(1);
+	}
     }
   return;
 }
@@ -96,7 +102,7 @@ int builtin_command(char **argv)
     }
   if (!strcmp(argv[0], "&"))    // ignorer & tout seul
     return 1;
-  if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg") || !strcmp(argv[0], "stop"))
+  if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg") || !strcmp(argv[0], "stop")|| !strcmp(argv[0], "wait"))
     return 1; 
 
   return 0;                     // ce n'est pas une commande integree

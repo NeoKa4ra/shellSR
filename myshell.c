@@ -35,18 +35,22 @@ void handler_sigchld(int sig)
   pid = waitpid(-1, &status, WNOHANG|WUNTRACED);// pid child
   if ((WIFSIGNALED(status) || WIFEXITED(status) || WCOREDUMP(status)) && pid > 0)//le fils est arrêter ?
     {
-      printf("le job %d s'est terminée ", searchIndWithPid(pid, &jobsTab) + 1);
-      if(WIFSIGNALED(status))
+      int ind  =  searchIndWithPid(pid, &jobsTab) + 1;//le "+1" est la decalage de l'utilisateur
+      if (ind != jobsTab.indiceFG + 1) //le "+1" est la decalage de l'utilisateur repercuter de la précédente instruction
 	{
-	  printf("par le signal %d\n", WTERMSIG(status));
-	}
-      if(WIFEXITED(status))
-	{
-	  printf("normalement\n");
-	}
-      if(WCOREDUMP(status))
-	{
-	  printf("par un core dump\n");
+	  printf("le job %d s'est terminée ",ind);
+	  if(WIFSIGNALED(status))
+	    {
+	      printf("par le signal %d\n", WTERMSIG(status));
+	    }
+	  if(WIFEXITED(status))
+	    {
+	      printf("normalement\n");
+	    }
+	  if(WCOREDUMP(status))
+	    {
+	      printf("par un core dump\n");
+	    }
 	}
       // oui -> delete Job
       delJobPid(pid, &jobsTab);
