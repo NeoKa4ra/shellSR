@@ -70,15 +70,19 @@ void addJob(jobT job, jobsT *jobs){
   jobs->taille++;
 }
 
-void printJob(jobsT jobs){
-	int i;
-	for (i=0;i<jobs.taille;i++){
-	  printf("[%d]\t",i+1);
-	  if(jobs.jobs[i].etat == ST)
-	    printf("Stopped\t%s", jobs.jobs[i].cmd);
-	  else
-	    printf("Running\t%s",  jobs.jobs[i].cmd);
-	}
+void printJob(jobsT jobs)
+{
+  int i;
+  for (i=0;i<jobs.taille;i++)
+    {
+      printf("[%d]\t",i+1);
+      if(jobs.jobs[i].etat == ST)
+	printf("Stopped\t%s", jobs.jobs[i].cmd);
+      else
+	printf("Running\t%s",  jobs.jobs[i].cmd);
+      fflush(stdout);
+    }
+  fflush(stdout);
 }
 
 

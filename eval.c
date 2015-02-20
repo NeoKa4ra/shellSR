@@ -25,6 +25,7 @@ void eval(char *cmdline, jobsT *jobs)
       
       if ((pid = Fork()) == 0)
 	{   
+
 	  setpgid(pid,pid);
 	  if (execvp(argv[0], argv) < 0)
 	    {
@@ -76,7 +77,7 @@ void eval(char *cmdline, jobsT *jobs)
 	  else if(!strcmp(argv[0], "stop"))
 	    {
 	      kill(pid, SIGTSTP);
-	      stopedJob(searchIndWithPid(pid,jobs), jobs);
+	      stoppedJob(searchIndWithPid(pid,jobs), jobs);
 	    }
 	  else
 	    putJobInBG(pid, jobs);
@@ -90,7 +91,9 @@ void eval(char *cmdline, jobsT *jobs)
 int builtin_command(char **argv)
 {
   if (!strcmp(argv[0], "quit")) // commande "quitter"
-    exit(0);
+    {
+      exit(0);
+    }
   if (!strcmp(argv[0], "&"))    // ignorer & tout seul
     return 1;
   if (!strcmp(argv[0], "jobs") || !strcmp(argv[0], "fg") || !strcmp(argv[0], "bg") || !strcmp(argv[0], "stop"))

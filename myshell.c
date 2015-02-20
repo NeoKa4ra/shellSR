@@ -13,7 +13,6 @@ void handler_sigint(int sig)
 {
 
   refusedSignal();
-  printf("%d\n",jobsTab.indiceFG);
   if(jobsTab.indiceFG != -1)
     {
       
@@ -31,15 +30,29 @@ void handler_sigchld(int sig)
   int status;
 	
   refusedSignal();
+  
 
   pid = waitpid(-1, &status, WNOHANG|WUNTRACED);// pid child
-  if(WIFEXITED(status) && (pid > 0))//le fils est arrêter ?
+  if ((WIFSIGNALED(status) || WIFEXITED(status) || WCOREDUMP(status)) && pid > 0)//le fils est arrêter ?
     {
-      
+      printf("le job %d s'est terminée ", searchIndWithPid(pid, &jobsTab) + 1);
+      if(WIFSIGNALED(status))
+	{
+	  printf("par le signal %d\n", WTERMSIG(status));
+	}
+      if(WIFEXITED(status))
+	{
+	  printf("normalement\n");
+	}
+      if(WCOREDUMP(status))
+	{
+	  printf("par un core dump\n");
+	}
       // oui -> delete Job
       delJobPid(pid, &jobsTab);
+      
     }
- 
+
   autorisedSignal();
 }
 
@@ -48,11 +61,12 @@ void handler_sigtstp(int sig)
 {
   
   refusedSignal();
-  if(jobsTab.indiceFG != -1){
+  if(jobsTab.indiceFG != -1)
+    {
 
-    Kill(jobsTab.jobs[jobsTab.indiceFG].pid, SIGTSTP);
-    stoppedJob(jobsTab.indiceFG, &jobsTab);// cette fonction met a jour les jobs
-  }
+      Kill(jobsTab.jobs[jobsTab.indiceFG].pid, SIGTSTP);
+      stoppedJob(jobsTab.indiceFG, &jobsTab);// cette fonction met a jour les jobs
+    }
 	
  
   autorisedSignal();
@@ -61,6 +75,8 @@ void handler_sigtstp(int sig)
 
 int main()
 {
+  setvbuf(stdout, NULL, _IOFBF, 100);
+  
   char cmdline[MAXLINE];                 // ligne de commande
   initJobs(&jobsTab);
 
@@ -71,11 +87,14 @@ int main()
 
   
   while (1)
-    {                            // boucle d'interpretation
-      printf("<my_shell> ");             // message d'invite
+    {// boucle d'interpretation
+      
+      fflush(stdout);
+      printf("<my_shell> ");     // message d'invite
+      fflush(stdout);
       Fgets(cmdline, MAXLINE, stdin);    // lire commande
       if (feof(stdin))                   // fin (control-D)
 	exit(0);
       eval(cmdline, &jobsTab);                     // interpreter commande
-  }
+    }
 }
